@@ -1,0 +1,18 @@
+title: "Mobile Robotics Project"
+description: "RAS 598 Project Documentation"
+# Use the Just the Docs theme via GitHub Pages compatible remote theme
+remote_theme: just-the-docs/just-the-docs
+
+# Enable Mermaid (Just the Docs supports it)
+mermaid:
+  version: "10.6.1"
+
+# Site settings
+color_scheme: light
+search_enabled: true
+
+# Keep URLs nice
+permalink: pretty
+
+# Navigation
+nav_sort: case_insensitive
