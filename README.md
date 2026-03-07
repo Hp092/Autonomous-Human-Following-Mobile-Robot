@@ -168,3 +168,89 @@ If the person is too far away, the robot moves forward. If the person gets too c
 The Safety Supervisor acts as the system’s protective layer. It constantly monitors important signals such as obstacle distance, sensor activity, and target tracking status. If something unusual happens, the supervisor overrides the controller and stops the robot immediately.
 
 For example, if the LiDAR detects an obstacle within a dangerous distance, the robot will halt even if the follow controller is requesting forward motion. Similarly, if the vision system loses the person for several seconds, the robot will stop instead of continuing blindly. The supervisor also watches for stale data or communication failures between modules. By acting as a final checkpoint before motion commands reach the robot base, this module ensures the system behaves safely in real environments.
+
+---
+
+# 4. Safety & Operational Protocol
+
+Because the robot operates around people in indoor spaces, safety is treated as a core design requirement rather than an afterthought. The system includes several safeguards that monitor sensor data, robot behavior, and communication between modules. If anything unexpected occurs, the robot will immediately stop instead of continuing to move without reliable information.
+
+The safety system is primarily managed by the **Safety Supervisor module**, which continuously checks the health of the perception and control pipeline before allowing motion commands to reach the robot base.
+
+---
+
+### Deadman Switch and Timeout Logic
+
+The system uses a timeout mechanism to ensure the robot only moves when all required data streams are active and up to date. Each important module publishes messages at a regular rate, and the Safety Supervisor monitors their timestamps.
+
+If any required message stops arriving within the expected time window, the robot immediately stops.
+
+The robot will halt if any of the following occurs:
+
+- The person tracking module fails to publish updates for a short period of time
+- Camera data stops arriving or becomes stale
+- LiDAR scans are not received within the expected interval
+- The follow controller stops publishing velocity commands
+- Communication with the robot base is interrupted
+
+This approach prevents the robot from moving based on outdated information.
+
+---
+
+### Emergency Stop Conditions
+
+Several conditions can trigger an immediate stop. These checks run continuously while the robot is operating.
+
+The robot will stop if:
+
+- An obstacle is detected within the minimum safety distance using LiDAR
+- The tracked person disappears from the camera view for longer than the allowed tracking window
+- Sensor data becomes invalid or inconsistent
+- The controller generates commands outside predefined safe limits
+- Communication between critical ROS nodes fails
+
+When one of these conditions occurs, the Safety Supervisor overrides all motion commands and publishes a zero-velocity command to the robot.
+
+---
+
+### Safe Recovery Behavior
+
+Once the robot has stopped due to a safety event, it will remain stationary until normal operating conditions return. The robot does not automatically resume motion immediately after stopping.
+
+Before motion resumes, the following conditions must be satisfied:
+
+- The camera and LiDAR sensors are publishing valid data again
+- The person detector has successfully reacquired the target
+- No obstacle is present within the safety boundary
+- All system modules are publishing messages normally
+
+This recovery behavior ensures the robot does not start moving again until it is safe to do so.
+
+---
+
+### Operating Environment
+
+The robot is designed to operate in **indoor environments** such as hallways, classrooms, and laboratory spaces. These environments typically have flat floors and predictable lighting conditions, which are suitable for vision-based tracking.
+
+To keep the system reliable during development, the robot will initially be tested under controlled conditions:
+
+- Indoor spaces with moderate lighting
+- Limited clutter and foot traffic
+- Clear walking paths for the person being followed
+
+Testing will gradually expand to more dynamic environments once the basic following behavior is stable.
+
+---
+
+### Operational Guidelines
+
+The following practices will be followed during testing and demonstrations:
+
+- The robot will maintain a safe following distance of roughly **1–1.5 meters** from the person.
+- Maximum speed will be limited to a conservative value during early experiments.
+- Only one designated person will be followed at a time.
+- If multiple people appear in the scene and the tracker becomes uncertain, the robot will stop rather than guessing a new target.
+- An operator will always be nearby during testing to manually stop the robot if necessary.
+
+These precautions help ensure that the robot behaves predictably and safely while interacting with people in shared spaces.
+
