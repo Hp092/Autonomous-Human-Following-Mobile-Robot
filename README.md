@@ -46,15 +46,44 @@ Success criteria include:
 
 ```mermaid
 flowchart LR
-    Camera --> PersonDetector
-    PersonDetector --> Tracker
-    Tracker --> RangeBearingEstimator
-    RangeBearingEstimator --> FollowController
-    FollowController --> CmdVel
 
-    Lidar --> SafetySupervisor
-    Tracker --> SafetySupervisor
-    SafetySupervisor --> CmdVel
+    subgraph Perception
+        A[RGB-D Camera Driver]
+        B[LiDAR Driver]
+        C[Person Detector]
+    end
+
+    subgraph Estimation
+        D[Target Tracker]
+        E[Range & Bearing Estimator]
+        F[Robot Odometry / TF]
+    end
+
+    subgraph Planning
+        G[Follow Controller]
+        H[Safety Supervisor]
+    end
+
+    subgraph Actuation
+        I[Base Driver / cmd_vel Interface]
+        J[TurtleBot 4 Lite Base]
+    end
+
+    A --> C
+    C --> D
+    D --> E
+    F --> G
+    E --> G
+
+    B --> H
+    D --> H
+    E --> H
+    G --> H
+
+    H --> I
+    I --> J
+
+    B -. Reactive safety bypass .-> H
 ```
 
 ## Module Declaration Table
