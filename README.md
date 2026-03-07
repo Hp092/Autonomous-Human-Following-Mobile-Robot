@@ -56,3 +56,16 @@ flowchart LR
     Tracker --> SafetySupervisor
     SafetySupervisor --> CmdVel
 ```
+
+## Module Declaration Table
+
+| Module                    | Type    | Description                                   |
+| ------------------------- | ------- | --------------------------------------------- |
+| Camera Driver             | Library | Publishes RGB-D image streams                 |
+| Person Detector (YOLO)    | Library | Detects human bounding boxes                  |
+| Tracker                   | Custom  | Maintains consistent target identity          |
+| Range & Bearing Estimator | Custom  | Computes relative pose of target              |
+| Follow Controller         | Custom  | Generates velocity commands                   |
+| Base Driver               | Library | Executes /cmd_vel commands                  |
+| Safety Supervisor         | Custom  | Monitors hazards and enforces stop conditions |
+| LiDAR Driver              | Library | Publishes obstacle range data                 |
