@@ -59,16 +59,20 @@ flowchart LR
 
 ## Module Declaration Table
 
-| Module                    | Type    | Description                                   |
-| ------------------------- | ------- | --------------------------------------------- |
-| Camera Driver             | Library | Publishes RGB-D image streams                 |
-| Person Detector (YOLO)    | Library | Detects human bounding boxes                  |
-| Tracker                   | Custom  | Maintains consistent target identity          |
-| Range & Bearing Estimator | Custom  | Computes relative pose of target              |
-| Follow Controller         | Custom  | Generates velocity commands                   |
-| Base Driver               | Library | Executes /cmd_vel commands                  |
-| Safety Supervisor         | Custom  | Monitors hazards and enforces stop conditions |
-| LiDAR Driver              | Library | Publishes obstacle range data                 |
+| Module | Category | Type | Library / Custom | Purpose |
+|------|------|------|------|------|
+| RGB‑D Camera Driver | Perception | Sensor Interface | Library | Publishes RGB and depth image streams used for detecting and estimating the position of the person being followed. |
+| LiDAR Driver | Perception | Sensor Interface | Library | Publishes 2D range scans used for obstacle awareness and emergency stopping. |
+| Person Detection | Perception | Vision Inference | Library | Detects humans in the camera image using a pretrained object detection model. |
+| Target Tracker | Estimation | State Estimation | Custom | Maintains a stable identity for the detected person across frames and filters noisy detections. |
+| Range & Bearing Estimator | Estimation | Pose Estimation | Custom | Converts visual detections into relative distance and angular position of the person with respect to the robot. |
+| Odometry / TF | Estimation | Localization | Library | Provides robot pose updates and coordinate transforms between robot and sensor frames. |
+| Follow Controller | Planning | Motion Control | Custom | Generates velocity commands that allow the robot to follow the person at a desired distance. |
+| Safety Supervisor | Planning | Safety Monitor | Custom | Monitors sensor health, obstacle distance, and target availability to stop the robot when necessary. |
+| Base Driver (`/cmd_vel`) | Actuation | Hardware Interface | Library | Converts velocity commands into motor actions executed by the TurtleBot base. |
+| TurtleBot 4 Lite Base | Actuation | Hardware Platform | Library / Hardware | Physical differential drive robot executing commanded motion. |
+
+---
 
 ---
 
