@@ -1,27 +1,58 @@
 # Mobile Robotics Project
 
-## Mission Statement (Milestone 1)
-**TODO:** One paragraph describing what the robot does, in what environment, and what “success” looks like.
+## Vision-Based Person-Following Mobile Robot
 
-## Project Website (GitHub Pages)
-The Milestone documentation lives on the project website:
-- **Website URL:** TODO (enable GitHub Pages, then paste link)
+---
 
-## ROS 2 Packages
-This repository contains ROS 2 package(s) intended to be cloned into a workspace (e.g., `colcon_ws/src/`).
+# 1. Mission Statement & Scope
 
-### Packages
-- `person_follower` (ament_python) – starter package skeleton for Milestone 1 tech requirement.
+The objective of this project is to design and implement a vision-based autonomous mobile robot capable of safely following a designated human target in indoor environments. The system will be deployed on a TurtleBot 4 Lite differential-drive mobile platform operating in structured indoor spaces such as hallways, classrooms, and laboratory corridors.
 
-## Quick Start (sanity check)
-```bash
-# From your workspace src folder:
-# git clone <THIS_REPO_URL>
+The robot will detect a person using onboard vision sensors, maintain a target following distance of approximately 1.0–1.5 meters, and continuously adjust its motion to keep the target centered within its field of view. The system must operate safely in shared human environments, immediately stopping in the event of lost target detection, sensor failure, or unsafe proximity to obstacles.
 
-cd ~/colcon_ws
-colcon build
-source install/setup.bash
+Success criteria include:
 
-# Example node (prints a heartbeat)
-ros2 run person_follower follower_node
+- Reliable person detection and tracking  
+- Stable following distance maintenance  
+- Smooth velocity control without oscillation  
+- Safe stop under failure or hazard conditions  
+
+---
+
+# 2. Technical Specifications
+
+## Robot Platform
+- TurtleBot 4 Lite  
+- Differential drive kinematic model  
+- Wheel encoder odometry  
+- IMU onboard  
+
+## Sensors
+- RGB-D camera (for person detection and depth estimation)  
+- RPLIDAR (for obstacle monitoring)  
+- Wheel encoders (odometry)  
+- IMU (pose stabilization)  
+
+## Software Framework
+- ROS 2 (Humble or compatible distribution)  
+- Standard `tf2` transform tree  
+- Velocity control via `/cmd_vel`  
+
+---
+
+# 3. High-Level System Architecture
+
+## System Diagram
+
+```mermaid
+flowchart LR
+    Camera --> PersonDetector
+    PersonDetector --> Tracker
+    Tracker --> RangeBearingEstimator
+    RangeBearingEstimator --> FollowController
+    FollowController --> CmdVel
+
+    Lidar --> SafetySupervisor
+    Tracker --> SafetySupervisor
+    SafetySupervisor --> CmdVel
 ```
