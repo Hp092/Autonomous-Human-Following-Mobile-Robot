@@ -74,49 +74,68 @@ flowchart LR
 
 ---
 
----
+# Module Intent
 
+## Library Modules
 
-# Module Intent & Algorithmic Design
+### RGB‑D Camera Driver
 
-## Camera Driver 
-
-The camera driver publishes RGB and depth image streams to ROS topics. It will be configured to operate at moderate resolution to balance detection accuracy and computational efficiency. Depth alignment parameters will be tuned to ensure consistent pixel-to-depth mapping.
-
----
-
-## Person Detector
-
-A YOLO-based detector will be used to identify human bounding boxes in RGB images. The detector is selected for its robustness in indoor lighting conditions and real-time performance capability. Confidence thresholds will be tuned to minimize false positives while maintaining reliable recall. Non-maximum suppression parameters will be adjusted to ensure a single bounding box per detected individual.
+The RGB‑D camera driver is responsible for providing the main visual input for the robot. It publishes both RGB images and depth information that the rest of the perception stack relies on. The RGB stream is used by the person detection module to identify humans in the scene, while the depth data helps estimate how far the person is from the robot. Because this driver already exists within the ROS ecosystem, we treat it as a library component rather than implementing it ourselves. Our main responsibility will be configuring parameters such as frame rate, resolution, and topic names so the perception modules receive consistent and reliable data.
 
 ---
 
-## Tracker 
+### LiDAR Driver
 
-The tracker maintains a persistent identity for the target human across frames. A nearest-neighbor association strategy will be implemented using bounding box centroid proximity and confidence scoring. Temporal smoothing will be applied using a first-order low-pass filter or Kalman filter to reduce jitter in bounding box position estimates. If the target is lost for more than a defined timeout period, the system will trigger recovery or stop behavior.
-
----
-
-## Range & Bearing Estimator 
-
-The estimator computes the relative distance and angular offset of the detected target in the robot's base frame. Using the aligned depth image, the median depth value within the bounding box region will be extracted to reduce noise. Bearing will be calculated from pixel displacement relative to the optical center using intrinsic camera parameters. The output will be a relative pose representation used by the follow controller.
+The LiDAR driver provides the robot with awareness of nearby obstacles. It continuously publishes range scans that indicate how far objects are from the robot in different directions. In this project the LiDAR is mainly used for safety rather than full mapping or navigation. The Safety Supervisor monitors these scans and immediately stops the robot if an object enters a predefined safety radius. Using an existing ROS driver ensures stable and real‑time access to LiDAR data without having to handle low‑level hardware communication ourselves.
 
 ---
 
-## Follow Controller 
+### Person Detection
 
-The follow controller converts relative range and bearing into linear and angular velocity commands. A proportional control strategy will regulate forward velocity based on distance error from the desired following range. Angular velocity will be computed from bearing offset to keep the target centered. Velocity limits and acceleration smoothing will be enforced to ensure stable and safe motion.
-
----
-
-## Base Driver 
-
-The TurtleBot base driver receives velocity commands via /cmd_vel and translates them into wheel velocities. No modification to this module is required beyond respecting velocity limits.
+The person detection module uses a pretrained deep‑learning model to identify humans within each camera frame. Instead of building a detector from scratch, we rely on an existing model such as YOLO that has already been trained on large image datasets. The module outputs bounding boxes, confidence scores, and class labels for detected people. This approach allows the project to focus on robotics logic rather than computer vision training. The detection output becomes the input for the tracking and estimation modules that ultimately drive the robot’s behavior.
 
 ---
 
-## Safety Supervisor 
+### Odometry / TF
 
-The safety supervisor operates as an independent monitoring layer. It listens to LiDAR data, target tracking status, and sensor timestamps. If the target is lost for more than a defined timeout, if an obstacle is detected within a predefined safety radius, or if sensor messages stop arriving, the supervisor overrides motion commands and issues zero velocity. This ensures safe operation in shared human environments.
+The odometry and transform system provides the robot with information about its own movement. Wheel encoders estimate how far the robot has traveled, and the TF system maintains the coordinate relationships between different components such as the base frame, camera frame, and LiDAR frame. Even though the robot is primarily reacting to the position of a person, it still needs to know how its own movement affects perception and control. This module ensures that all data in the system shares a consistent coordinate reference.
 
 ---
+
+### Base Driver (`/cmd_vel`)
+
+The base driver is the interface between the high‑level control system and the robot hardware. It listens for velocity commands published to the `/cmd_vel` topic and converts them into wheel motions for the TurtleBot. This module handles the low‑level details of motor control and ensures the commands remain within safe limits. By relying on the standard ROS driver provided with the TurtleBot platform, we can focus our development on the person‑following behavior rather than on hardware control.
+
+---
+
+## Custom Modules
+
+### Target Tracker
+
+The target tracker maintains a consistent identity for the person that the robot is following. Raw detections from the vision model can fluctuate between frames due to occlusions, lighting changes, or multiple people appearing in view. Without tracking, the robot could repeatedly switch targets or behave unpredictably. The tracker solves this by associating detections over time and selecting the most consistent candidate to follow.
+
+The module stores the position, size, and confidence of the selected detection across frames. By comparing new detections with previous ones, it determines whether the same person is still visible. If the detection disappears briefly, the tracker maintains the last known position for a short time before declaring the target lost. This smoothing helps stabilize the robot’s behavior and prevents sudden changes in motion.
+
+---
+
+### Range & Bearing Estimator
+
+Once a person is detected and tracked, the robot still needs to understand where that person is relative to itself. The Range and Bearing Estimator converts the visual information into a more useful representation for motion control. It calculates two main values: the distance from the robot to the person and the horizontal angle offset between the robot’s forward direction and the person’s position.
+
+Depth information from the RGB‑D camera is used to estimate distance, while the position of the bounding box in the image helps estimate the angle. Because depth readings can be noisy, the module filters measurements and removes outliers before publishing the final estimate. The output becomes the key input for the follow controller, allowing the robot to move in a way that maintains a comfortable distance from the person.
+
+---
+
+### Follow Controller
+
+The follow controller is the module that determines how the robot moves in response to the person’s position. Its goal is to keep the robot a fixed distance behind the person while keeping the person centered in the camera view. The controller receives range and bearing estimates and converts them into linear and angular velocity commands.
+
+If the person is too far away, the robot moves forward. If the person gets too close, the robot slows down or stops. At the same time, the controller adjusts the robot’s heading to keep the person in front of it. To avoid jerky movement, the controller applies limits to acceleration and smooths command changes over time. This helps produce natural motion that feels stable when the robot is following someone down a hallway or across a room.
+
+---
+
+### Safety Supervisor
+
+The Safety Supervisor acts as the system’s protective layer. It constantly monitors important signals such as obstacle distance, sensor activity, and target tracking status. If something unusual happens, the supervisor overrides the controller and stops the robot immediately.
+
+For example, if the LiDAR detects an obstacle within a dangerous distance, the robot will halt even if the follow controller is requesting forward motion. Similarly, if the vision system loses the person for several seconds, the robot will stop instead of continuing blindly. The supervisor also watches for stale data or communication failures between modules. By acting as a final checkpoint before motion commands reach the robot base, this module ensures the system behaves safely in real environments.
