@@ -31,6 +31,7 @@ setup(
             'follow_controller       = person_follower.follow_controller:main',
             'safety_supervisor       = person_follower.safety_supervisor:main',
             'noise_injector          = person_follower.noise_injector:main',
+            'human_detector_node     = person_follower.human_detector_node:main',
         ],
     },
 )
