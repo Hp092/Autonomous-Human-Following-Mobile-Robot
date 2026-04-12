@@ -8,9 +8,8 @@ class SimPersonPublisher(Node):
     def __init__(self):
         super().__init__('sim_person_publisher')
 
-        # Tunable parameters — change at runtime to move the fake person
-        self.declare_parameter('center_x', 320.0)   # pixels (image width = 640)
-        self.declare_parameter('center_y', 240.0)   # pixels (image height = 480)
+        self.declare_parameter('center_x', 320.0)
+        self.declare_parameter('center_y', 240.0)
         self.declare_parameter('box_width', 100.0)
         self.declare_parameter('box_height', 200.0)
         self.declare_parameter('publish_hz', 10.0)

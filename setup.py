@@ -19,8 +19,8 @@ setup(
     ],
     install_requires=['setuptools'],
     zip_safe=True,
-    maintainer='your_name',
-    maintainer_email='your_email@asu.edu',
+    maintainer='Harsh Padmalwar, Atharv Kulkarni',
+    maintainer_email='hpadmalw@asu.edu, akulka96@asu.edu',
     description='Autonomous human-following robot - RAS 598',
     license='MIT',
     entry_points={
