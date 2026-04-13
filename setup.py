@@ -30,6 +30,7 @@ setup(
             'range_bearing_estimator = person_follower.range_bearing_estimator:main',
             'follow_controller       = person_follower.follow_controller:main',
             'safety_supervisor       = person_follower.safety_supervisor:main',
+            'person_follower         = person_follower.person_follower:main',
             'noise_injector          = person_follower.noise_injector:main',
             'human_detector_node     = person_follower.human_detector_node:main',
         ],
