@@ -85,11 +85,6 @@ class FollowController(Node):
             self.get_logger().info('State changed to IDLE')
 
     def control_loop(self):
-        if self.state == State.IDLE:
-            self.publish_cmd_vel(0.0, 0.0)
-            self.publish_state()
-            return
-
         if self.state == State.FOLLOWING:
             if not self.target_detected:
                 spin_dir = 1.0 if self.last_seen_bearing >= 0.0 else -1.0
@@ -100,22 +95,28 @@ class FollowController(Node):
             range_error = self.target_distance - self.follow_distance
             angle_error = self.target_heading
 
-            linear_x = self.kp_linear * range_error
-            angular_z = self.kp_angular * angle_error
+            turn_only_threshold = math.radians(12.0)
 
-            if abs(angle_error) < self.deadband_angle:
-                angular_z = 0.0
+            if abs(angle_error) > turn_only_threshold:
+                linear_x = 0.0
+                angular_z = self.kp_angular * angle_error
+            else:
+                linear_x = self.kp_linear * range_error
+                angular_z = self.kp_angular * angle_error
 
-            linear_x *= max(0.0, math.cos(angle_error))
-            linear_x = max(0.0, min(self.max_linear_speed, linear_x))
+                if abs(angle_error) < self.deadband_angle:
+                    angular_z = 0.0
+
+                linear_x = max(0.0, linear_x)
 
             angular_z = (
                 self.angular_smoothing * angular_z
                 + (1.0 - self.angular_smoothing) * self.prev_angular_z
             )
             angular_z = max(-self.max_angular_speed, min(self.max_angular_speed, angular_z))
-            self.prev_angular_z = angular_z
+            linear_x = max(0.0, min(self.max_linear_speed, linear_x))
 
+            self.prev_angular_z = angular_z
             self.publish_cmd_vel(linear_x, angular_z)
 
         self.publish_state()
