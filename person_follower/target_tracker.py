@@ -17,6 +17,7 @@ from cv_bridge import CvBridge
 from ultralytics import YOLO
 
 from tf2_ros import Buffer, TransformListener, TransformException
+import tf2_geometry_msgs
 from tf_transformations import quaternion_from_euler
 
 
@@ -146,7 +147,7 @@ class TargetTracker(Node):
 
         self.create_subscription(
             CompressedImage,
-            '/oakd/rgb/image_raw/compressed',
+            '/oakd/rgb/preview/image_raw/compressed',
             self.image_callback,
             10
         )

@@ -78,7 +78,7 @@ class SafetySupervisor(Node):
         )
         self.create_subscription(
             CompressedImage,
-            '/oakd/rgb/image_raw/compressed',
+            '/oakd/rgb/preview/image_raw/compressed',
             self.camera_cb,
             10
         )
