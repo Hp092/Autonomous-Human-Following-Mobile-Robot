@@ -196,7 +196,7 @@ class TargetTracker(Node):
 
     def compute_heading(self, center):
         x_norm = (center[0] - self.cx) / self.fx
-        theta_cam = -math.atan(x_norm)
+        theta_cam = -math.atan(x_norm) 
 
         dx, dy = 0.0635, 0.0381
         x_c, y_c = math.cos(theta_cam), math.sin(theta_cam)

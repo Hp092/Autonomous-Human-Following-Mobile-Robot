@@ -33,6 +33,7 @@ setup(
             'person_follower         = person_follower.person_follower:main',
             'noise_injector          = person_follower.noise_injector:main',
             'human_detector_node     = person_follower.human_detector_node:main',
+            'stationary_demo = person_follower.stationary_demo:main',
         ],
     },
 )

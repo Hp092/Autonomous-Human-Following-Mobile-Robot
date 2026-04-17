@@ -20,7 +20,7 @@ class FollowController(Node):
         self.declare_parameter('follow_distance', 1.0)
         self.declare_parameter('search_rot_speed', 0.4)
         self.declare_parameter('kp_linear', 0.45)
-        self.declare_parameter('kp_angular', 0.45)
+        self.declare_parameter('kp_angular', 0.45) 
         self.declare_parameter('max_linear_speed', 0.22)
         self.declare_parameter('max_angular_speed', 0.6)
         self.declare_parameter('deadband_angle_deg', 4.0)
@@ -49,7 +49,7 @@ class FollowController(Node):
         self.target_heading = 0.0
         self.last_seen_bearing = 0.0
         self.prev_angular_z = 0.0
-        self.angular_smoothing = 0.2
+        self.angular_smoothing = 0.2  
         self.last_target_seen_time = None
 
         self.create_subscription(Bool, '/see/target_in_frame', self.target_flag_cb, 10)
@@ -140,8 +140,9 @@ class FollowController(Node):
             angular_z = 0.0
 
         linear_x *= max(0.2, math.cos(angle_error))
-        linear_x = max(0.0, linear_x)
-
+        #linear_x = 0.0  # Stationary mode — no forward movement 
+        linear_x = max(0.0, linear_x) 
+        
         angular_z = (
             self.angular_smoothing * angular_z
             + (1.0 - self.angular_smoothing) * self.prev_angular_z
