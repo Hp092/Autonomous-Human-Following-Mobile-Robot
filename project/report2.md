@@ -1,25 +1,25 @@
 # Autonomous Human-Following Mobile Robot
 
 **Course:** RAS 598 — Mobile Robotics  
-**Platform:** TurtleBot 4   
+**Platform:** TurtleBot 4 with iRobot Create 3 base  
 **Sensors:** OAK-D RGB camera, 2D LiDAR  
-**Software:** ROS 2 Jazzy   
+**Software:** ROS 2 Jazzy  
 **Team:** Harsh Padmalwar, Atharv Kulkarni
 
 ---
 
 ## Overview
 
-In this project, we built an autonomous human-following mobile robot using a TurtleBot 4. Our robot detects a person in the camera feed using YOLO, estimates the target’s distance and heading, and commands the base to move toward the person while maintaining a safe following distance.
+In this project, we built an autonomous human-following mobile robot using a TurtleBot 4. Our robot detects a person in the camera feed using YOLO, estimates the person’s distance and heading, and commands the base to move toward the detected person while maintaining a safe following distance.
 
-Our project has moved well beyond the original Milestone 1 concept. The current implementation is organized around four active custom ROS 2 nodes:
+Our implementation has moved well beyond the original Milestone 1 proposal. The current runtime pipeline is built around four active custom ROS 2 nodes:
 
 - `target_tracker.py`
 - `follow_controller.py`
 - `safety_supervisor.py`
 - `person_follower.py`
 
-We now have a hardware-tested pipeline. The TurtleBot is able to detect a person and move toward them. The main limitation at this stage is that while moving forward, the robot can still drift in heading, which causes the detected person to move out of the camera view. Once that happens, the robot stops moving forward and enters search behavior. Improving this heading-centering behavior is one of our main goals for Milestone 3.
+At this stage, the robot can detect a person and move toward them on hardware. The main issue that still remains is heading regulation during forward motion. While approaching a person, the TurtleBot can drift sideways, which causes the person to move out of the camera view. Once the target leaves the frame, the robot stops forward motion and enters search behavior. Fixing this centering and search behavior is one of our main Milestone 3 goals.
 
 ---
 
@@ -39,18 +39,18 @@ Our current objective is to make the TurtleBot:
 
 ### What we proposed in Milestone 1
 
-In Milestone 1, we focused on system design and planning. Our original proposal included:
+In Milestone 1, we proposed:
 
 - a TurtleBot 4 differential-drive platform
 - camera-based human detection
 - LiDAR-based obstacle monitoring
 - a modular ROS 2 architecture
-- a follow controller using target distance and heading
+- a follow controller driven by target distance and heading
 - a safety layer to override unsafe commands
 
 ### What we achieved in Milestone 2
 
-At this stage, we have a working hardware-integrated pipeline that:
+In Milestone 2, we implemented and tested a working hardware-integrated pipeline that:
 
 - subscribes to TurtleBot camera and LiDAR topics
 - uses YOLO to detect a person
@@ -62,14 +62,13 @@ At this stage, we have a working hardware-integrated pipeline that:
 
 ### What we plan to improve in Milestone 3
 
-For Milestone 3, we will focus on improving the quality and robustness of following:
+In Milestone 3, we plan to improve:
 
-- keep the detected person centered in the camera view while moving
-- reduce sideways drift during forward motion
-- improve heading stability for stationary and moving targets
-- make search behavior use the **last seen bounding-box direction**
-- improve reacquisition when the target briefly leaves the frame
-- reduce perception flicker and unstable target loss
+- heading stability during forward motion
+- centering of the person in the camera viewport
+- search behavior based on the **last seen bounding-box direction**
+- reacquisition after temporary target loss
+- target retention during brief perception flicker
 
 ---
 
@@ -84,7 +83,7 @@ For Milestone 3, we will focus on improving the quality and robustness of follow
 
 ### Software
 
-- ROS 2 Jazzy 
+- ROS 2 Jazzy / compatible
 - Python
 - YOLO-based person detector
 - RViz
@@ -96,7 +95,7 @@ For Milestone 3, we will focus on improving the quality and robustness of follow
 
 ### Why this section matters
 
-In this project, there are two levels of kinematics that matter:
+There are two levels of kinematics that matter in this project:
 
 1. **Robot kinematics** — how the TurtleBot differential-drive base moves when commanded  
 2. **Follower control logic** — how we convert the detected person’s distance and heading into motion commands  
@@ -308,6 +307,21 @@ This matches the behavior of our current follow controller.
 
 ---
 
+### Math-to-code alignment
+
+The main mapping from the equations to the ROS 2 implementation is:
+
+| Math Quantity | Code Variable / Topic | Where it appears |
+|---|---|---|
+| `d` | `/see/target_distance` | `target_tracker.py` → `follow_controller.py` |
+| `alpha` | `/see/target_heading` | `target_tracker.py` → `follow_controller.py` |
+| `e_d = d - d*` | `range_error` | `follow_controller.py` |
+| `e_alpha = alpha` | `angle_error` | `follow_controller.py` |
+| `v` | `linear.x` | `follow_controller.py` → `safety_supervisor.py` → `person_follower.py` |
+| `omega` | `angular.z` | `follow_controller.py` → `safety_supervisor.py` → `person_follower.py` |
+
+---
+
 ### Why the robot currently drifts
 
 Our current system demonstrates the correct overall structure, but one issue remains:
@@ -321,7 +335,7 @@ So the kinematics are correct, but the **control tuning and target retention log
 
 ---
 
-## Updated System Architecture
+## System Architecture
 
 The older Milestone 1 flow is no longer the best representation of what is actually running. Our current implementation is simpler and directly aligned with the current codebase.
 
@@ -338,7 +352,9 @@ Camera + LiDAR
 
 ---
 
-## Updated Mermaid Diagram
+## Detailed Computational Map
+
+### Updated Mermaid Diagram
 
 ```mermaid
 flowchart LR
@@ -358,15 +374,37 @@ flowchart LR
     F -- "/cmd_vel_unstamped : geometry_msgs/Twist" --> G["TurtleBot Base"]
 ```
 
----
+### `rqt_graph` Export
 
-## `rqt_graph`
-
-We will also include an `rqt_graph` export of the current ROS 2 pipeline.
+We will include an `rqt_graph` export of the running pipeline here:
 
 ```text
 docs/images/rqt_graph_m2.png
 ```
+
+**Add in README:**
+
+```markdown
+![rqt_graph export](docs/images/rqt_graph_m2.png)
+```
+
+### Topics in the active flow
+
+| Topic | Message Type |
+|---|---|
+| `/oakd/rgb/preview/image_raw/compressed` | `sensor_msgs/CompressedImage` |
+| `/scan` | `sensor_msgs/LaserScan` |
+| `/see/target_in_frame` | `std_msgs/Bool` |
+| `/see/person_location` | `geometry_msgs/PoseStamped` |
+| `/see/target_distance` | `std_msgs/Float32` |
+| `/see/target_heading` | `std_msgs/Float32` |
+| `/think/follow_cmd_vel` | `geometry_msgs/TwistStamped` |
+| `/cmd_vel` | `geometry_msgs/TwistStamped` |
+| `/cmd_vel_unstamped` | `geometry_msgs/Twist` |
+
+### Services and actions in the current active flow
+
+Our current Milestone 2 runtime path does not use any **custom** ROS 2 services or actions in the person-following stack shown above. The active path is topic-driven.
 
 ---
 
@@ -392,6 +430,9 @@ This table reflects the current project state and updates the older Milestone 1 
 
 ### `target_tracker.py`
 
+**Source:**  
+[`person_follower/target_tracker.py`](person_follower/target_tracker.py)
+
 **Purpose:**  
 We use this node to detect a person with YOLO and publish the target state used by the rest of the stack.
 
@@ -413,12 +454,33 @@ We use this node to detect a person with YOLO and publish the target state used 
 5. estimate target distance using LiDAR
 6. publish the target state to the control pipeline
 
+**Current tuned parameters:**
+
+| Parameter | Current Value | Purpose |
+|---|---|---|
+| `model_path` | `yolov8n.pt` | YOLO model file |
+| `device` | `cpu` or `cuda:0` | Compute target for inference |
+| `confidence_threshold` | `0.4` | YOLO detection filtering |
+| `fallback_distance` | `2.0` | Used when LiDAR distance is unavailable |
+| position filter window | `7` | Smooths target position estimates |
+| position filter minimum confidence | `3` | Minimum valid measurements before trusted output |
+| alpha-beta distance filter alpha | `0.25` | Distance smoothing |
+
+**Hardware-specific notes:**
+- camera topic used: `/oakd/rgb/preview/image_raw/compressed`
+- current camera-to-LiDAR offset used in heading logic:
+  - `dx = 0.0635`
+  - `dy = 0.0381`
+
 **Current limitation:**  
 Target visibility can flicker if the person moves out of the frame or the detector becomes inconsistent for a few frames.
 
 ---
 
 ### `follow_controller.py`
+
+**Source:**  
+[`person_follower/follow_controller.py`](person_follower/follow_controller.py)
 
 **Purpose:**  
 We use this node to move the robot toward the person while trying to keep the person centered in the camera frame.
@@ -441,12 +503,31 @@ We use this node to move the robot toward the person while trying to keep the pe
 4. reduce forward speed when heading error increases
 5. publish a stamped velocity command for the safety layer
 
+**Current tuned parameters:**
+
+| Parameter | Current Value | Purpose |
+|---|---|---|
+| `follow_distance` | `1.0` | Desired stand-off distance |
+| `search_rot_speed` | `0.4` | Search rotation speed when target is lost |
+| `kp_linear` | `0.45` | Linear proportional gain |
+| `kp_angular` | `0.45` | Angular proportional gain |
+| `max_linear_speed` | `0.22` | Linear velocity limit |
+| `max_angular_speed` | `0.6` | Angular velocity limit |
+| `deadband_angle_deg` | `4.0` | Small-angle deadband |
+| `control_rate` | `10.0` | Control loop rate |
+| `min_valid_distance` | `0.2` | Minimum usable distance |
+| `max_valid_distance` | `5.0` | Maximum usable distance |
+| `target_lost_timeout` | `0.5` | Short memory window before search mode |
+
 **Current limitation:**  
 The TurtleBot can move toward the person but still over-correct in heading, causing the person to drift out of view. This is one of our main Milestone 3 tuning tasks.
 
 ---
 
 ### `safety_supervisor.py`
+
+**Source:**  
+[`person_follower/safety_supervisor.py`](person_follower/safety_supervisor.py)
 
 **Purpose:**  
 We use this node as the final protective layer before commands reach the robot base.
@@ -455,11 +536,11 @@ We use this node as the final protective layer before commands reach the robot b
 - `/think/follow_cmd_vel`
 - `/scan`
 - relevant perception status topics
-- camera activity or heartbeat topics as configured
+- camera activity topics
 
 **Publishes to:**
 - `/cmd_vel`
-- safety status topics if enabled
+- optional safety status topics
 
 **Logic flow:**
 1. monitor obstacle distance from LiDAR
@@ -468,12 +549,30 @@ We use this node as the final protective layer before commands reach the robot b
 4. override unsafe commands with zero velocity
 5. publish only safe motion commands downstream
 
+**Current tuned parameters:**
+
+| Parameter | Current Value | Purpose |
+|---|---|---|
+| `min_obstacle_distance` | `0.50` | Safety stop radius |
+| `target_loss_timeout` | `2.0` | Stop if person is lost too long |
+| `camera_timeout` | `1.0` | Camera heartbeat timeout |
+| `lidar_timeout` | `1.0` | LiDAR heartbeat timeout |
+| `controller_timeout` | `1.0` | Controller heartbeat timeout |
+| `max_linear_speed` | `0.30` | Acceptable command limit |
+| `max_angular_speed` | `1.20` | Acceptable angular command limit |
+| `scan_angle_min_deg` | `-25.0` | Front scan window start |
+| `scan_angle_max_deg` | `25.0` | Front scan window end |
+| `publish_rate` | `20.0` | Safety loop rate |
+
 **Why it matters:**  
 This node prevents the robot from moving blindly when the target or sensors become unreliable.
 
 ---
 
 ### `person_follower.py`
+
+**Source:**  
+[`person_follower/person_follower.py`](person_follower/person_follower.py)
 
 **Purpose:**  
 We use this node to bridge the safe control command to the TurtleBot motion interface.
@@ -489,140 +588,158 @@ We use this node to bridge the safe control command to the TurtleBot motion inte
 2. convert it to the format used by the TurtleBot base in our current setup
 3. publish the final command that makes the robot move in real life
 
----
+**Current tuned parameters:**
 
-## Topics Used
-
-### Perception topics
-
-| Topic | Message Type | Description |
+| Parameter | Current Value | Purpose |
 |---|---|---|
-| `/oakd/rgb/preview/image_raw/compressed` | `sensor_msgs/CompressedImage` | OAK-D RGB image stream |
-| `/scan` | `sensor_msgs/LaserScan` | LiDAR scan |
-| `/see/target_in_frame` | `std_msgs/Bool` | Whether a person is currently detected |
-| `/see/person_location` | `geometry_msgs/PoseStamped` | Estimated relative pose of the detected person |
-| `/see/target_distance` | `std_msgs/Float32` | Estimated distance to the detected person |
-| `/see/target_heading` | `std_msgs/Float32` | Estimated heading to the detected person |
+| `input_topic` | `/cmd_vel` | Safe input command topic |
+| `output_topic` | `/cmd_vel_unstamped` | Base motion command topic |
+| `command_timeout` | `0.75` | Stop if command stream goes stale |
+| `max_linear_speed` | `0.30` | Clamp base linear command |
+| `max_angular_speed` | `1.20` | Clamp base angular command |
+| `publish_rate` | `20.0` | Publish loop rate |
 
-### Control and actuation topics
+---
 
-| Topic | Message Type | Description |
+## Experimental Analysis and Validation
+
+### ROS Communication Proof
+
+We verified that the active nodes are functional and able to communicate over ROS 2.
+
+**Completed active nodes:**
+- `target_tracker.py`
+- `follow_controller.py`
+- `safety_supervisor.py`
+- `person_follower.py`
+
+**Proof we will include:**
+- screenshot of `ros2 node list`
+- screenshot of `ros2 topic list`
+- screenshot of `ros2 topic echo /think/follow_cmd_vel`
+- screenshot of `rqt_graph`
+
+**README placeholders:**
+
+```markdown
+![Node list proof](docs/images/node_list_proof.png)
+![Topic list proof](docs/images/topic_list_proof.png)
+![Follow command proof](docs/images/follow_cmd_echo.png)
+![rqt_graph export](docs/images/rqt_graph_m2.png)
+```
+
+---
+
+### Noise and Uncertainty Analysis
+
+#### Hardware calibration, offsets, and tuning
+
+The project is running on hardware, so our main uncertainty sources come from the camera, LiDAR, and target-detection pipeline.
+
+**Camera / geometry assumptions currently used in code:**
+
+| Quantity | Current Value | Notes |
 |---|---|---|
-| `/think/follow_cmd_vel` | `geometry_msgs/TwistStamped` | Raw follow command from the controller |
-| `/cmd_vel` | `geometry_msgs/TwistStamped` | Safe velocity command after supervision |
-| `/cmd_vel_unstamped` | `geometry_msgs/Twist` | Final command sent to the TurtleBot base in our current setup |
+| `fx` | `1012.88` | Camera focal scale in x |
+| `fy` | `1012.88` | Camera focal scale in y |
+| `cx` | `634.40` | Principal point x |
+| `cy` | `363.77` | Principal point y |
+| `dx` | `0.0635` | Camera-to-LiDAR x offset used in heading logic |
+| `dy` | `0.0381` | Camera-to-LiDAR y offset used in heading logic |
+
+#### Measured / observed uncertainty during hardware runs
+
+**Add a real table here from your test data:**
+
+| Quantity Tested | Test Condition | Observed Value / Range | Notes |
+|---|---|---|---|
+| target distance | person standing still at known location | `ADD_RANGE_HERE` | measured from `/see/target_distance` |
+| target heading | person standing still in center view | `ADD_RANGE_HERE` | measured from `/see/target_heading` |
+| heading jitter | person stationary, robot stationary | `ADD_STD_DEV_HERE` | estimate from repeated samples |
+| detection flicker | person partially near image edge | `ADD_OBSERVATION_HERE` | target visibility instability |
+
+#### Parameter tuning we used to adapt to noise
+
+- position filter window = `7`
+- distance alpha-beta filter alpha = `0.25`
+- angular smoothing = `0.2`
+- `target_lost_timeout` in controller = `0.5`
+- `target_loss_timeout` in safety = `2.0`
+
+These were tuned to reduce abrupt motion changes and prevent immediate failure on one missed frame.
+
+#### Simulation note
+
+Our current milestone path is a **hardware track**, not a simulation-only track. Because of that, the standalone simulation noise injector node is **not part of the active Milestone 2 runtime stack**.
+
+If we later add a simulation validation branch, we will document the standalone noise injector there.
 
 ---
 
-## Comparison: Milestone 1 vs Milestone 2
+### Run-time Issues We Observed
 
-| Area | Milestone 1 | Milestone 2 |
-|---|---|---|
-| Architecture | Proposal-level design | Working ROS 2 node pipeline |
-| Human detection | Planned | Implemented with YOLO |
-| Distance and heading estimation | Planned | Implemented in `target_tracker.py` |
-| Follow controller | Planned | Implemented and hardware-tested |
-| Safety supervisor | Planned | Implemented |
-| Real robot motion | Not yet demonstrated | Demonstrated |
-| RViz-based demo | Planned | Demonstrated |
-| Robust centering during follow | Not achieved | Still being tuned |
-| Directed search using last seen bounding box | Not achieved | Deferred to Milestone 3 |
+During our hardware runs, we observed the following behaviors:
 
----
+- the TurtleBot successfully detects a person and begins moving forward
+- the robot can still drift sideways while approaching the target
+- the person is not always kept centered in the camera viewport
+- if the person leaves the frame, the controller enters search behavior
+- the search is not yet directed using the last seen bounding-box location
+- intermittent target flicker can cause unstable following
 
-## Experimental Analysis and Current Challenge
-
-Our system now shows successful end-to-end integration:
-
-- the TurtleBot detects a person using YOLO
-- the robot begins moving toward the detected person
-- the robot stops or searches when the person leaves the frame
-- the safety layer remains active during motion
-
-### Current observed problem
-
-The main issue is **heading stability during forward motion**:
-
-- the robot moves forward
-- the heading changes too aggressively or inconsistently
-- the person drifts out of the camera viewport
-- the controller loses the target and switches to search behavior
-
-So our current system demonstrates clear technical integration, but not yet perfect person-centering during motion.
-
----
-
-## Noise, Uncertainty, and Runtime Issues
-
-### Perception uncertainty
-
-- YOLO detections can fluctuate between frames
-- target visibility can briefly flicker
-- target heading varies as the bounding box shifts in the image
-- target distance may change due to LiDAR reading noise
-
-### Runtime issues we observed
-
-- intermittent target loss causes transition into search mode
-- forward motion can include heading drift
-- the person may leave the camera view while the robot is still approaching
-- reacquisition currently relies on simple search behavior rather than last-seen bounding-box direction
-
-### What we will improve next
-
-- use the last seen bounding-box direction in search behavior
-- improve controller tuning for smoother heading correction
-- improve target retention during brief perception dropouts
-- make reacquisition more stable
+**Specific issue we plan to fix next:**
+- when the person leaves the frame, we want the TurtleBot to search in the direction where the bounding box was last seen instead of using a more generic search behavior
 
 ---
 
 ## Demonstration Videos
 
-We plan to show our two demo videos directly from the repo page using **GIF previews** in the README and keep the full `.mp4` files in the repo under `docs/videos/`.
+We are keeping both **repo-visible previews** and **official video links**.
 
-### 1. RViz camera-view demonstration
+### RViz Camera-View Demo
 
-This video shows:
+This demo shows:
 
 - the TurtleBot camera stream visualized in RViz
-- YOLO detecting a person as they enter the image
+- YOLO detecting a person
 - the TurtleBot beginning to move toward the person
 
-**README preview placeholder:**
+**README GIF preview:**
 
 ```markdown
-![RViz demo preview](docs/videos/rviz_demo.gif)
+[![RViz demo preview](docs/videos/rviz_demo.gif)](YOUTUBE_OR_VIMEO_LINK_HERE)
 ```
 
-**Full video file:**
+**Files:**
+- `docs/videos/rviz_demo.gif`
+- `docs/videos/rviz_demo.mp4`
 
-```text
-docs/videos/rviz_demo.mp4
-```
+**Official video link:**  
+`YOUTUBE_OR_VIMEO_LINK_HERE`
 
 ---
 
-### 2. Person point-of-view demonstration
+### Person Point-of-View Demo
 
-This video shows:
+This demo shows:
 
-- the person standing in front of the TurtleBot
+- a person standing in front of the TurtleBot
 - the TurtleBot moving toward the person
 - the sideways drift and heading issue
-- the robot re-entering search behavior when the person moves out of the camera view
+- the robot re-entering search mode when the person moves out of the camera view
 
-**README preview placeholder:**
+**README GIF preview:**
 
 ```markdown
-![POV demo preview](docs/videos/pov_demo.gif)
+[![POV demo preview](docs/videos/pov_demo.gif)](YOUTUBE_OR_VIMEO_LINK_HERE)
 ```
 
-**Full video file:**
+**Files:**
+- `docs/videos/pov_demo.gif`
+- `docs/videos/pov_demo.mp4`
 
-```text
-docs/videos/pov_demo.mp4
-```
+**Official video link:**  
+`YOUTUBE_OR_VIMEO_LINK_HERE`
 
 ---
 
@@ -665,7 +782,9 @@ Autonomous-Human-Following-Mobile-Robot/
 ├── docs/
 │   ├── images/
 │   │   ├── rqt_graph_m2.png
-│   │   └── ...
+│   │   ├── node_list_proof.png
+│   │   ├── topic_list_proof.png
+│   │   └── follow_cmd_echo.png
 │   └── videos/
 │       ├── rviz_demo.gif
 │       ├── rviz_demo.mp4
@@ -749,22 +868,32 @@ Add the camera topic and any other relevant tracking topics as needed.
 
 | Milestone 1 Feedback | What we changed in Milestone 2 | Current Status |
 |---|---|---|
-| Architecture was too proposal-heavy and not implementation-specific | We replaced the older high-level flow with the active-node architecture and updated Mermaid diagram | Done |
-| We needed a stronger bridge between theory and node dataflow | We added the kinematics section and active ROS 2 topic map | Done |
-| We needed stronger hardware evidence | We added a hardware-tested pipeline and demo videos | Done |
-| We needed a clearer safety layer | We implemented `safety_supervisor.py` | Done |
-| We needed more robust target retention and reacquisition | Basic reacquisition exists, but last-seen search is still pending | Pending for Milestone 3 |
+| `ADD_FEEDBACK_ITEM_1` | `ADD_TECHNICAL_ACTION_1` | `Done / Pending` |
+| `ADD_FEEDBACK_ITEM_2` | `ADD_TECHNICAL_ACTION_2` | `Done / Pending` |
+| `ADD_FEEDBACK_ITEM_3` | `ADD_TECHNICAL_ACTION_3` | `Done / Pending` |
+| `ADD_FEEDBACK_ITEM_4` | `ADD_TECHNICAL_ACTION_4` | `Done / Pending` |
 
 ---
 
 ## Individual Contribution Table
 
-> We will replace commit hashes with our actual repo history before submission.
+> We will replace the placeholders below with our actual commit history before submission.
 
-| Team Member | Primary Technical Role | Key Git Commits / PRs | Specific File(s) / Authorship |
+| Team Member | Primary Technical Role | Key Git Commits / PRs | Specific File(s) Authorship |
 |---|---|---|---|
-| Harsh Padmalwar | Control, safety, integration, documentation | `COMMIT_HASH_HERE` | `follow_controller.py`, `safety_supervisor.py`, `README.md` |
-| Atharv Kulkarni | Perception, YOLO integration, hardware testing, documentation | `COMMIT_HASH_HERE` | `target_tracker.py`, `person_follower.py`, `README.md` |
+| Harsh Padmalwar | Control, safety, integration, documentation | `COMMIT_HASH_HERE` | [`person_follower/follow_controller.py`](person_follower/follow_controller.py), [`person_follower/safety_supervisor.py`](person_follower/safety_supervisor.py), [`README.md`](README.md) |
+| Atharv Kulkarni | Perception, YOLO integration, hardware testing, documentation | `COMMIT_HASH_HERE` | [`person_follower/target_tracker.py`](person_follower/target_tracker.py), [`person_follower/person_follower.py`](person_follower/person_follower.py), [`README.md`](README.md) |
+
+---
+
+## Git Audit Readiness
+
+To keep our repo audit-ready, we will make sure that:
+
+- all code is committed incrementally
+- both team members have visible authored commits
+- file authorship matches the contributions claimed in the report
+- the final submission includes the exact commit hash used for grading
 
 ---
 
@@ -798,4 +927,4 @@ The main remaining challenge is not the robot kinematics themselves, but the **q
 - ROS 2 Documentation
 - Ultralytics YOLO Documentation
 - OAK-D Documentation
-- Project milestone guidelines
+- RAS 598 project milestone page
