@@ -684,7 +684,7 @@ During our hardware runs, we observed the following behaviors:
 
 ## Demonstration Videos
 
-We are keeping both **repo-visible previews** and **official video links**.
+The GIF previews below are visible directly in the report. Clicking on each GIF opens the full video file stored in the repository under `docs/Videos/`.
 
 ### RViz Camera-View Demo
 
@@ -694,15 +694,11 @@ This demo shows:
 - YOLO detecting a person
 - the TurtleBot beginning to move toward the person
 
-**README GIF preview:**
-
-```markdown
-[![RViz demo preview](docs/videos/rviz_demo.gif)](YOUTUBE_OR_VIMEO_LINK_HERE)
-```
+[![RViz demo preview](../docs/Videos/RVIZ.gif)](../docs/Videos/RVIZ.mp4)
 
 **Files:**
-- `docs/videos/rviz_demo.gif`
-- `docs/videos/rviz_demo.mp4`
+- `../docs/Videos/RVIZ.gif`
+- `../docs/Videos/RVIZ.mp4`
 
 ---
 
@@ -715,15 +711,11 @@ This demo shows:
 - the sideways drift and heading issue
 - the robot re-entering search mode when the person moves out of the camera view
 
-**README GIF preview:**
-
-```markdown
-[![POV demo preview](docs/videos/pov_demo.gif)](YOUTUBE_OR_VIMEO_LINK_HERE)
-```
+[![POV demo preview](../docs/Videos/POV.gif)](../docs/Videos/POV.mp4)
 
 **Files:**
-- `docs/videos/pov_demo.gif`
-- `docs/videos/pov_demo.mp4`
+- `../docs/Videos/POV.gif`
+- `../docs/Videos/POV.mp4`
 
 ---
 
