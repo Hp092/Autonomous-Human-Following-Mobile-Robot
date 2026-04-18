@@ -615,7 +615,7 @@ The screenshots below show the active ROS graph from our hardware-tested setup.
 
 #### ROS topic list
 
-![ROS topic list](../docs/Images/rostopiclist.png)
+![ROS topic list](../docs/Images/rostopiclist.jpeg)
 
 During testing, we also verified that the controller was publishing follow commands on `/think/follow_cmd_vel` and that safe motion commands were propagated downstream through the safety and actuation pipeline.
 ---
