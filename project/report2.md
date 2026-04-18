@@ -374,19 +374,13 @@ flowchart LR
     F -- "/cmd_vel_unstamped : geometry_msgs/Twist" --> G["TurtleBot Base"]
 ```
 
-### `rqt_graph` Export
+### rqt_graph
 
-We will include an `rqt_graph` export of the running pipeline here:
+We included an <code>rqt_graph</code> export of the running pipeline here:
 
-```text
-docs/images/rqt_graph_m2.png
-```
-
-**Add in README:**
-
-```markdown
-![rqt_graph export](docs/images/rqt_graph_m2.png)
-```
+<p align="center">
+  <img src="../docs/Images/rqt_graph_m2.png" alt="rqt_graph" width="700">
+</p>
 
 ### Topics in the active flow
 
@@ -431,7 +425,7 @@ This table reflects the current project state and updates the older Milestone 1 
 ### `target_tracker.py`
 
 **Source:**  
-[`person_follower/target_tracker.py`](person_follower/target_tracker.py)
+[`target_tracker.py`](../person_follower/target_tracker.py)
 
 **Purpose:**  
 We use this node to detect a person with YOLO and publish the target state used by the rest of the stack.
@@ -480,7 +474,7 @@ Target visibility can flicker if the person moves out of the frame or the detect
 ### `follow_controller.py`
 
 **Source:**  
-[`person_follower/follow_controller.py`](person_follower/follow_controller.py)
+[`follow_controller.py`](../person_follower/follow_controller.py)
 
 **Purpose:**  
 We use this node to move the robot toward the person while trying to keep the person centered in the camera frame.
@@ -527,7 +521,7 @@ The TurtleBot can move toward the person but still over-correct in heading, caus
 ### `safety_supervisor.py`
 
 **Source:**  
-[`person_follower/safety_supervisor.py`](person_follower/safety_supervisor.py)
+[`safety_supervisor.py`](../person_follower/safety_supervisor.py)
 
 **Purpose:**  
 We use this node as the final protective layer before commands reach the robot base.
@@ -572,7 +566,7 @@ This node prevents the robot from moving blindly when the target or sensors beco
 ### `person_follower.py`
 
 **Source:**  
-[`person_follower/person_follower.py`](person_follower/person_follower.py)
+[`person_follower/person_follower.py`](../person_follower/person_follower.py)
 
 **Purpose:**  
 We use this node to bridge the safe control command to the TurtleBot motion interface.
@@ -605,7 +599,7 @@ We use this node to bridge the safe control command to the TurtleBot motion inte
 
 ### ROS Communication Proof
 
-We verified that the active nodes are functional and able to communicate over ROS 2.
+We verified that the active nodes in our Milestone 2 stack are functional and able to communicate over ROS 2.
 
 **Completed active nodes:**
 - `target_tracker.py`
@@ -613,21 +607,17 @@ We verified that the active nodes are functional and able to communicate over RO
 - `safety_supervisor.py`
 - `person_follower.py`
 
-**Proof we will include:**
-- screenshot of `ros2 node list`
-- screenshot of `ros2 topic list`
-- screenshot of `ros2 topic echo /think/follow_cmd_vel`
-- screenshot of `rqt_graph`
+The screenshots below show the active ROS graph from our hardware-tested setup.
 
-**README placeholders:**
+#### ROS node list
 
-```markdown
-![Node list proof](docs/images/node_list_proof.png)
-![Topic list proof](docs/images/topic_list_proof.png)
-![Follow command proof](docs/images/follow_cmd_echo.png)
-![rqt_graph export](docs/images/rqt_graph_m2.png)
-```
+![ROS node list](../docs/Images/rosnodelist.png)
 
+#### ROS topic list
+
+![ROS topic list](../docs/Images/rostopiclist.png)
+
+During testing, we also verified that the controller was publishing follow commands on `/think/follow_cmd_vel` and that safe motion commands were propagated downstream through the safety and actuation pipeline.
 ---
 
 ### Noise and Uncertainty Analysis
@@ -714,9 +704,6 @@ This demo shows:
 - `docs/videos/rviz_demo.gif`
 - `docs/videos/rviz_demo.mp4`
 
-**Official video link:**  
-`YOUTUBE_OR_VIMEO_LINK_HERE`
-
 ---
 
 ### Person Point-of-View Demo
@@ -737,9 +724,6 @@ This demo shows:
 **Files:**
 - `docs/videos/pov_demo.gif`
 - `docs/videos/pov_demo.mp4`
-
-**Official video link:**  
-`YOUTUBE_OR_VIMEO_LINK_HERE`
 
 ---
 
@@ -770,32 +754,42 @@ The robot remains stationary until:
 
 ```text
 Autonomous-Human-Following-Mobile-Robot/
+├── .github/
+├── _includes/
+├── _layouts/
+├── assets/
+├── config/
+├── docs/
+│   ├── Images/
+│   │   ├── rqt_graph_m2.png
+│   │   ├── rosnodelist.png
+│   │   └── rostopiclist.jpeg
+│   └── Videos/
+│       ├── RVIZ.gif
+│       ├── RVIZ.mp4
+│       ├── POV.gif
+│       └── POV.mp4
 ├── person_follower/
+│   ├── __init__.py
 │   ├── target_tracker.py
 │   ├── follow_controller.py
 │   ├── safety_supervisor.py
 │   ├── person_follower.py
-│   ├── __init__.py
 │   └── ...
-├── launch/
-├── config/
-├── docs/
-│   ├── images/
-│   │   ├── rqt_graph_m2.png
-│   │   ├── node_list_proof.png
-│   │   ├── topic_list_proof.png
-│   │   └── follow_cmd_echo.png
-│   └── videos/
-│       ├── rviz_demo.gif
-│       ├── rviz_demo.mp4
-│       ├── pov_demo.gif
-│       └── pov_demo.mp4
+├── project/
+│   ├── index.md
+│   ├── report1.md
+│   ├── report2.md
+│   └── report3.md
+├── resource/
+├── test/
+├── _config.yml
+├── index.md
+├── .gitignore
+├── Gemfile
 ├── package.xml
 ├── setup.py
-├── setup.cfg
-└── README.md
-```
-
+└── setup.cfg
 ---
 
 ## Build Instructions
@@ -847,7 +841,7 @@ ros2 run person_follower person_follower
 
 ### Visualize in RViz
 
-Add the camera topic and any other relevant tracking topics as needed.
+- `/see/person_detector/image_raw`
 
 ---
 
@@ -864,14 +858,16 @@ Add the camera topic and any other relevant tracking topics as needed.
 
 ## Feedback Integration Table
 
-> We will replace the placeholder rows below with the exact Milestone 1 feedback we received.
-
-| Milestone 1 Feedback | What we changed in Milestone 2 | Current Status |
+| Milestone 1 Feedback / Question | What we changed in Milestone 2 | Current Status |
 |---|---|---|
-| `ADD_FEEDBACK_ITEM_1` | `ADD_TECHNICAL_ACTION_1` | `Done / Pending` |
-| `ADD_FEEDBACK_ITEM_2` | `ADD_TECHNICAL_ACTION_2` | `Done / Pending` |
-| `ADD_FEEDBACK_ITEM_3` | `ADD_TECHNICAL_ACTION_3` | `Done / Pending` |
-| `ADD_FEEDBACK_ITEM_4` | `ADD_TECHNICAL_ACTION_4` | `Done / Pending` |
+| The custom modules are Target Tracker and Range & Bearing Estimator. The former is probably going to use a library that gives you the 2D/3D position, and the latter is a few lines of code. If this is not true, please let me know what the expected work is. | We revised the architecture and simplified the runtime stack. Instead of keeping `range_bearing_estimator` as a separate active node in the final flow, we integrated heading and distance estimation directly inside `target_tracker.py` using YOLO detections from the RGB camera and distance estimation from LiDAR. We also added three custom modules beyond the original proposal: `follow_controller.py`, `safety_supervisor.py`, and `person_follower.py`, which together handle motion generation, safety overrides, and hardware command forwarding. | Done |
+| The project website does not render properly. I read your report from the git repo README file on GitHub. | We reorganized the milestone documentation into separate report files inside the repository and corrected Markdown rendering issues such as broken Mermaid syntax, math formatting, and media/image paths. We also updated the documentation structure so the report can be read directly from the repository in rendered Markdown form. | Done |
+| What happens when someone walks in between the robot and the person? Is this something you expect to tackle in this project? | In the current implementation, this case is not fully solved. If the tracked person is occluded or leaves the camera frame, the robot can lose the target and switch into search behavior. We documented this as a current limitation and identified target retention/reacquisition as a Milestone 3 improvement area. | Pending |
+| Are you estimating the future trajectory of the person so you can recover when lost? | No future trajectory prediction is implemented in the current code. The present controller uses current distance and heading measurements, short-term smoothing, and a timeout-based recovery/search behavior. We plan to improve recovery in Milestone 3 by using the last seen bounding-box direction when the target is lost. | Not yet implemented |
+| A part of robotics in the real world is to signify the robot's intentions to the people around it (the person it's following, or other people sharing the environment). Are you planning to use auditory or visual cues to signify this? | We have not implemented auditory or visual intention cues in the current Milestone 2 code. Our effort in this milestone was focused on perception, following control, safety supervision, and hardware integration. This remains a possible extension for a future milestone if time permits. | Not yet implemented |
+| If you plan to use the TurtleBot outside the lab, how do you plan to set up a WiFi access point to communicate with the robot over ROS? | Outdoor or off-lab network deployment is not implemented in the current project code. Our Milestone 2 workflow uses the TurtleBot communication setup available in the course environment, including SSH access and ROS topic visibility from the external machine. We documented the current setup as the active hardware workflow, but we have not yet developed a custom standalone WiFi access point solution. | Not yet implemented |
+| How can you make sure the person it's following is unique compared to other people in the environment? | The current implementation does not yet guarantee unique target identity in a multi-person scene. We are using YOLO-based person detection and the active stack does not yet include persistent identity tracking or re-identification. We explicitly documented this as an open challenge and a future extension area. | Pending |
+| Positive feedback: the safety recovery behavior is a strong professional addition. | We preserved and expanded this idea by implementing `safety_supervisor.py` as an explicit runtime safety layer. It monitors command freshness, target visibility, and obstacle conditions, and overrides unsafe motion with stop commands before commands reach the base. | Done |
 
 ---
 
