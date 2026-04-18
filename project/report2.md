@@ -1,5 +1,13 @@
 # Autonomous Human-Following Mobile Robot
 
+---
+layout: default
+title: Milestone 2
+parent: Project
+nav_order: 2
+permalink: /project/report2/
+---
+
 **Course:** RAS 598 — Mobile Robotics  
 **Platform:** TurtleBot 4 with iRobot Create 3 base  
 **Sensors:** OAK-D RGB camera, 2D LiDAR  
