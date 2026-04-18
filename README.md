@@ -253,4 +253,3 @@ The following practices will be followed during testing and demonstrations:
 - An operator will always be nearby during testing to manually stop the robot if necessary.
 
 These precautions help ensure that the robot behaves predictably and safely while interacting with people in shared spaces.
-
