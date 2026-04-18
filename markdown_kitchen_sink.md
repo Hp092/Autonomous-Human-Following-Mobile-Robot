@@ -1,9 +1,8 @@
 ---
+layout: default
 title: Markdown kitchen sink
-layout: home
-nav_order: 99
+nav_exclude: true
 ---
-
 Text can be **bold**, _italic_, or ~~strikethrough~~.
 
 [Link to another home page]({{site.baseurl}}/).
