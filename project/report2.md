@@ -684,7 +684,7 @@ During our hardware runs, we observed the following behaviors:
 
 ## Demonstration Videos
 
-The GIF previews below are visible directly in the report. Clicking on each GIF opens the full video file stored in the repository under `docs/Videos/`.
+The GIF previews below are visible directly in the report. Clicking on each GIF opens the full video file stored in the repository.
 
 ### RViz Camera-View Demo
 
@@ -696,9 +696,8 @@ This demo shows:
 
 [![RViz demo preview](../docs/Videos/RVIZ.gif)](../docs/Videos/RVIZ.mp4)
 
-**Files:**
-- `../docs/Videos/RVIZ.gif`
-- `../docs/Videos/RVIZ.mp4`
+**Video file:**  
+[`RVIZ.mp4`](../docs/Videos/RVIZ.mp4)
 
 ---
 
@@ -713,9 +712,8 @@ This demo shows:
 
 [![POV demo preview](../docs/Videos/POV.gif)](../docs/Videos/POV.mp4)
 
-**Files:**
-- `../docs/Videos/POV.gif`
-- `../docs/Videos/POV.mp4`
+**Video file:**  
+[`POV.mp4`](../docs/Videos/POV.mp4)
 
 ---
 
