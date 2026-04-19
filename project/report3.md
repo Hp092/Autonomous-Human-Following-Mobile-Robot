@@ -6,13 +6,9 @@ nav_order: 3
 permalink: /project/report3/
 ---
 
-# Report 3: ZZ
+# Milestone 3
 
-{: .no_toc }
-
-This page demonstrates the core capabilities of the Just the Docs theme, including navigation, mathematical typesetting, and technical diagrams.
-
----
+This page will contain the Milestone 3 report.
 
 ## Table of Contents
 
