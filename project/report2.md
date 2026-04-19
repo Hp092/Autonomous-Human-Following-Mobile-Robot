@@ -891,12 +891,10 @@ ros2 run person_follower person_follower
 
 ## Individual Contribution Table
 
-> We will replace the placeholders below with our actual commit history before submission.
-
 | Team Member | Primary Technical Role | Key Git Commits / PRs | Specific File(s) Authorship |
 |---|---|---|---|
-| Harsh Padmalwar | Control, safety, integration, documentation | `COMMIT_HASH_HERE` | [`person_follower/follow_controller.py`](person_follower/follow_controller.py), [`person_follower/safety_supervisor.py`](person_follower/safety_supervisor.py), [`README.md`](README.md) |
-| Atharv Kulkarni | Perception, YOLO integration, hardware testing, documentation | `COMMIT_HASH_HERE` | [`person_follower/target_tracker.py`](person_follower/target_tracker.py), [`person_follower/person_follower.py`](person_follower/person_follower.py), [`README.md`](README.md) |
+| Harsh Padmalwar | Control, safety, integration, documentation | [dec5616](https://github.com/Hp092/Autonomous-Human-Following-Mobile-Robot/commit/dec5616), [73cd6d5](https://github.com/Hp092/Autonomous-Human-Following-Mobile-Robot/commit/73cd6d5), [bfc6d75](https://github.com/Hp092/Autonomous-Human-Following-Mobile-Robot/commit/bfc6d75) | [follow_controller.py](https://github.com/Hp092/Autonomous-Human-Following-Mobile-Robot/blob/main/person_follower/follow_controller.py), [safety_supervisor.py](https://github.com/Hp092/Autonomous-Human-Following-Mobile-Robot/blob/main/person_follower/safety_supervisor.py) |
+| Atharv Kulkarni | Perception, YOLO integration, hardware testing, documentation | [20ddda6](https://github.com/Hp092/Autonomous-Human-Following-Mobile-Robot/commit/20ddda6), [87e1cab](https://github.com/Hp092/Autonomous-Human-Following-Mobile-Robot/commit/87e1cab), [cba4c2f](https://github.com/Hp092/Autonomous-Human-Following-Mobile-Robot/commit/cba4c2f) | [target_tracker.py](https://github.com/Hp092/Autonomous-Human-Following-Mobile-Robot/blob/main/person_follower/target_tracker.py), [person_follower.py](https://github.com/Hp092/Autonomous-Human-Following-Mobile-Robot/blob/main/person_follower/person_follower.py) |
 
 ---
 
