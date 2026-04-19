@@ -387,7 +387,7 @@ flowchart LR
 We included an <code>rqt_graph</code> export of the running pipeline here:
 
 <p align="center">
-  <img src="../docs/Images/rqt_graph_m2.png" alt="rqt_graph" width="700">
+  <img src="https://hp092.github.io/Autonomous-Human-Following-Mobile-Robot/docs/Images/rqt_graph_m2.png" alt="rqt_graph" width="700">
 </p>
 
 ### Topics in the active flow
@@ -481,7 +481,9 @@ Target visibility can flicker if the person moves out of the frame or the detect
 
 The following demonstrates our YOLO-based person detection running live on the TurtleBot 4. The bounding box shows the detected person with confidence score, estimated distance, and bearing angle computed in real time.
 
-![YOLO Detection Demo](../docs/Videos/YOLO.gif)
+<p align="center">
+  <img src="https://hp092.github.io/Autonomous-Human-Following-Mobile-Robot/docs/Videos/YOLO.gif" alt="YOLO Detection Demo" width="700">
+</p>
 
 ---
 
@@ -625,11 +627,15 @@ The screenshots below show the active ROS graph from our hardware-tested setup.
 
 #### ROS node list
 
-![ROS node list](../docs/Images/rosnodelist.png)
+<p align="center">
+  <img src="https://hp092.github.io/Autonomous-Human-Following-Mobile-Robot/docs/Images/rosnodelist.png" alt="ROS node list" width="700">
+</p>
 
 #### ROS topic list
 
-![ROS topic list](../docs/Images/rostopiclist.jpeg)
+<p align="center">
+  <img src="https://hp092.github.io/Autonomous-Human-Following-Mobile-Robot/docs/Images/rostopiclist.jpeg" alt="ROS topic list" width="700">
+</p>
 
 During testing, we also verified that the controller was publishing follow commands on `/think/follow_cmd_vel` and that safe motion commands were propagated downstream through the safety and actuation pipeline.
 
@@ -744,7 +750,6 @@ This demo shows:
 [`POV.mp4`](../docs/Videos/POV.mp4)
 
 ---
-
 ## Safety and Operational Protocol
 
 Because the robot operates around people in indoor spaces, we treat safety as a core requirement.
