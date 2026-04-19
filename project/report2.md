@@ -477,6 +477,12 @@ We use this node to detect a person with YOLO and publish the target state used 
 **Current limitation:**  
 Target visibility can flicker if the person moves out of the frame or the detector becomes inconsistent for a few frames.
 
+**YOLO Person Detection Demo:**
+
+The following demonstrates our YOLO-based person detection running live on the TurtleBot 4. The bounding box shows the detected person with confidence score, estimated distance, and bearing angle computed in real time.
+
+![YOLO Detection Demo](../docs/Videos/YOLO.gif)
+
 ---
 
 ### `follow_controller.py`
