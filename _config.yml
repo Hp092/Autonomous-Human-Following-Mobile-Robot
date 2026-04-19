@@ -8,3 +8,11 @@ search_enabled: true
 
 aux_links:
   GitHub Repository: https://github.com/Hp092/Autonomous-Human-Following-Mobile-Robot
+  
+# MathJax for LaTeX equations
+markdown: kramdown
+kramdown:
+  math_engine: mathjax
+
+mathjax:
+  source: https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js
