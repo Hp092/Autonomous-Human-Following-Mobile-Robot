@@ -1,5 +1,3 @@
-# Autonomous Human-Following Mobile Robot
-
 ---
 layout: default
 title: Milestone 2
@@ -15,6 +13,8 @@ permalink: /project/report2/
 **Team:** Harsh Padmalwar, Atharv Kulkarni
 
 ---
+
+# Autonomous Human-Following Mobile Robot
 
 ## Overview
 
