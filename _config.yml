@@ -1,12 +1,10 @@
-title: Autonomous Human-Following Mobile Robot
-description: RAS 598 Mobile Robotics — Vision-based person-following robot using TurtleBot 4 Lite and ROS 2.
+title: Mobile Robotics Project
+description: Autonomous Human-Following Mobile Robot
 theme: just-the-docs
-
 url: https://hp092.github.io
 baseurl: /Autonomous-Human-Following-Mobile-Robot
 
-remote_theme: just-the-docs/just-the-docs
-math: mathjax
+search_enabled: true
 
 aux_links:
   GitHub Repository: https://github.com/Hp092/Autonomous-Human-Following-Mobile-Robot
