@@ -3,9 +3,8 @@ description: Autonomous Human-Following Mobile Robot
 theme: just-the-docs
 url: https://hp092.github.io
 baseurl: /Autonomous-Human-Following-Mobile-Robot
-
 search_enabled: true
-
+math: mathjax
 aux_links:
   GitHub Repository: https://github.com/Hp092/Autonomous-Human-Following-Mobile-Robot
   

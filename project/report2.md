@@ -387,7 +387,7 @@ flowchart LR
 We included an <code>rqt_graph</code> export of the running pipeline here:
 
 <p align="center">
-  <img src="/Autonomous-Human-Following-Mobile-Robot/docs/Images/rqt_graph_m2.png" alt="rqt_graph" width="700">
+  <img src="https://hp092.github.io/Autonomous-Human-Following-Mobile-Robot/docs/Images/rqt_graph_m2.png" alt="rqt_graph" width="700">
 </p>
 
 ### Topics in the active flow
@@ -481,7 +481,9 @@ Target visibility can flicker if the person moves out of the frame or the detect
 
 The following demonstrates our YOLO-based person detection running live on the TurtleBot 4. The bounding box shows the detected person with confidence score, estimated distance, and bearing angle computed in real time.
 
-![YOLO Detection Demo](/Autonomous-Human-Following-Mobile-Robot/docs/Videos/YOLO.gif)
+<p align="center">
+  <img src="https://hp092.github.io/Autonomous-Human-Following-Mobile-Robot/docs/Videos/YOLO.gif" alt="YOLO Detection Demo" width="700">
+</p>
 
 ---
 
@@ -625,11 +627,15 @@ The screenshots below show the active ROS graph from our hardware-tested setup.
 
 #### ROS node list
 
-![ROS node list](/Autonomous-Human-Following-Mobile-Robot/docs/Images/rosnodelist.png)
+<p align="center">
+  <img src="https://hp092.github.io/Autonomous-Human-Following-Mobile-Robot/docs/Images/rosnodelist.png" alt="ROS node list" width="700">
+</p>
 
 #### ROS topic list
 
-![ROS topic list](/Autonomous-Human-Following-Mobile-Robot/docs/Images/rostopiclist.jpeg)
+<p align="center">
+  <img src="https://hp092.github.io/Autonomous-Human-Following-Mobile-Robot/docs/Images/rostopiclist.jpeg" alt="ROS topic list" width="700">
+</p>
 
 During testing, we also verified that the controller was publishing follow commands on `/think/follow_cmd_vel` and that safe motion commands were propagated downstream through the safety and actuation pipeline.
 
@@ -744,7 +750,6 @@ This demo shows:
 [`POV.mp4`](/Autonomous-Human-Following-Mobile-Robot/docs/Videos/POV.mp4)
 
 ---
-
 ## Safety and Operational Protocol
 
 Because the robot operates around people in indoor spaces, we treat safety as a core requirement.
@@ -891,12 +896,10 @@ ros2 run person_follower person_follower
 
 ## Individual Contribution Table
 
-> We will replace the placeholders below with our actual commit history before submission.
-
 | Team Member | Primary Technical Role | Key Git Commits / PRs | Specific File(s) Authorship |
 |---|---|---|---|
-| Harsh Padmalwar | Control, safety, integration, documentation | `COMMIT_HASH_HERE` | [`person_follower/follow_controller.py`](person_follower/follow_controller.py), [`person_follower/safety_supervisor.py`](person_follower/safety_supervisor.py), [`README.md`](README.md) |
-| Atharv Kulkarni | Perception, YOLO integration, hardware testing, documentation | `COMMIT_HASH_HERE` | [`person_follower/target_tracker.py`](person_follower/target_tracker.py), [`person_follower/person_follower.py`](person_follower/person_follower.py), [`README.md`](README.md) |
+| Harsh Padmalwar | Control, safety, integration, documentation | [dec5616](https://github.com/Hp092/Autonomous-Human-Following-Mobile-Robot/commit/dec5616), [73cd6d5](https://github.com/Hp092/Autonomous-Human-Following-Mobile-Robot/commit/73cd6d5), [bfc6d75](https://github.com/Hp092/Autonomous-Human-Following-Mobile-Robot/commit/bfc6d75) | [follow_controller.py](https://github.com/Hp092/Autonomous-Human-Following-Mobile-Robot/blob/main/person_follower/follow_controller.py), [safety_supervisor.py](https://github.com/Hp092/Autonomous-Human-Following-Mobile-Robot/blob/main/person_follower/safety_supervisor.py) |
+| Atharv Kulkarni | Perception, YOLO integration, hardware testing, documentation | [20ddda6](https://github.com/Hp092/Autonomous-Human-Following-Mobile-Robot/commit/20ddda6), [87e1cab](https://github.com/Hp092/Autonomous-Human-Following-Mobile-Robot/commit/87e1cab), [cba4c2f](https://github.com/Hp092/Autonomous-Human-Following-Mobile-Robot/commit/cba4c2f) | [target_tracker.py](https://github.com/Hp092/Autonomous-Human-Following-Mobile-Robot/blob/main/person_follower/target_tracker.py), [person_follower.py](https://github.com/Hp092/Autonomous-Human-Following-Mobile-Robot/blob/main/person_follower/person_follower.py) |
 
 ---
 
