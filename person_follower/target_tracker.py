@@ -140,10 +140,10 @@ class TargetTracker(Node):
         self.target_msg = Bool()
         self.target_msg.data = False
 
-        self.fx = 1012.88
-        self.fy = 1012.88
-        self.cx = 634.40
-        self.cy = 363.77
+        self.fx = 196.32
+        self.fy = 196.32
+        self.cx = 127.18
+        self.cy = 126.63
 
         self.create_subscription(
             CompressedImage,
